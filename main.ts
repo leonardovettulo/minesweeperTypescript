@@ -1,7 +1,8 @@
 let cantCol: number = 10; //Cantidad total de columnas
 let cantFil: number = 10; //Cantidad total de filas
-let cantMinas: number = 10; //Cantidad total de minas
+let cantMinas: number = 5; //Cantidad total de minas
 let tablero: any[][] = [[]]; //Array de objetos
+let cantidadOcultos: number = cantCol * cantFil - cantMinas; //Contador para saber cuando ganamos
 
 let divPrincipal: any = document.getElementById("principal");
 
@@ -136,15 +137,17 @@ function click(id: string) {
                 //Perdiste el juego
             } else if (tablero[fil][col].status !== 0) {
                 //console.log("numero");
-                document.getElementById(id).style.backgroundColor = "white";
-                document.getElementById(id).style.textIndent = "0px";
-                tablero[fil][col].visible = "visto";
+                cambiarStatus(fil, col);
+                // document.getElementById(id).style.backgroundColor = "white";
+                // document.getElementById(id).style.textIndent = "0px";
+                // tablero[fil][col].visible = "visto";
                 //Hay un numero revelar
             } else {
                 //console.log("blanco");
-                document.getElementById(id).style.backgroundColor = "white";
-                document.getElementById(id).style.textIndent = "0px";
-                tablero[fil][col].visible = "visto";
+                cambiarStatus(fil, col);
+                // document.getElementById(id).style.backgroundColor = "white";
+                // document.getElementById(id).style.textIndent = "0px";
+                // tablero[fil][col].visible = "visto";
                 //Hay una caja vacia, expandir...
                 verificarVecino(fil, col);
             }
@@ -183,6 +186,13 @@ function cambiarStatus(fil: number, col: number) {
     //console.log(id);
     document.getElementById(id).style.backgroundColor = "white";
     document.getElementById(id).style.textIndent = "0px";
+    cantidadOcultos--;
+    console.log(cantidadOcultos);
+    if (cantidadOcultos === 0) {
+        mostrarTodo();
+
+        console.warn("Ganaste");
+    }
 }
 
 //Funcion para mostrar todo cuando perdemos o ganamos
