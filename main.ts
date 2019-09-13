@@ -6,6 +6,13 @@ let cantidadOcultos: number = cantCol * cantFil - cantMinas; //Contador para sab
 
 let divPrincipal: any = document.getElementById("principal");
 
+//document.getElementById("minas").innerHTML = cantidadOcultos;
+
+//Boton Para comenzar un juego nuevo
+let botonReset = document
+    .getElementById("reset")
+    .addEventListener("click", resetClick);
+
 //Clase para guardar las coordenadas de cada caja(casillero) del tablero
 class Caja {
     fil: number;
@@ -18,6 +25,24 @@ class Caja {
         this.fil = fil;
         this.status = status;
         this.visible = visible;
+    }
+}
+
+//Clase Timer para medir el tiempo
+class Timer {
+    id: number;
+    constructor(public counter = 0, id: number = 0) {
+        let intervalId = setInterval(() => {
+            this.counter = this.counter + 1;
+            console.log(this.counter);
+            document.getElementById("timer").innerHTML = this.counter;
+            if (this.counter === 999) clearInterval(intervalId);
+        }, 1000);
+        this.id = intervalId;
+    }
+
+    finTimer() {
+        clearInterval(this.id);
     }
 }
 
@@ -130,24 +155,18 @@ function click(id: string) {
         let cajaStatus = document.getElementById(id).getAttribute("status");
 
         if (tablero[fil][col].visible === "oculto") {
-            //console.log(tablero[fil][col]);
             if (tablero[fil][col].status === -1) {
                 console.error("perdiste");
                 mostrarTodo();
+                timer.finTimer();
                 //Perdiste el juego
             } else if (tablero[fil][col].status !== 0) {
-                //console.log("numero");
                 cambiarStatus(fil, col);
-                // document.getElementById(id).style.backgroundColor = "white";
-                // document.getElementById(id).style.textIndent = "0px";
-                // tablero[fil][col].visible = "visto";
+
                 //Hay un numero revelar
             } else {
-                //console.log("blanco");
                 cambiarStatus(fil, col);
-                // document.getElementById(id).style.backgroundColor = "white";
-                // document.getElementById(id).style.textIndent = "0px";
-                // tablero[fil][col].visible = "visto";
+
                 //Hay una caja vacia, expandir...
                 verificarVecino(fil, col);
             }
@@ -186,12 +205,15 @@ function cambiarStatus(fil: number, col: number) {
     //console.log(id);
     document.getElementById(id).style.backgroundColor = "white";
     document.getElementById(id).style.textIndent = "0px";
+
     cantidadOcultos--;
+
     console.log(cantidadOcultos);
     if (cantidadOcultos === 0) {
         mostrarTodo();
 
         console.warn("Ganaste");
+        timer.finTimer();
     }
 }
 
@@ -207,11 +229,22 @@ function mostrarTodo() {
     }
 }
 
+///Función para juego nuevo
+function resetClick(e) {
+    crearTablero(cantCol, cantFil);
+    crearMinas(cantMinas);
+    asignarNumero();
+    //console.log(tablero);
+    divPrincipal.innerHTML = ""; //limpio el HTML
+    cantidadOcultos = cantCol * cantFil - cantMinas; //Reseteo el contador
+    imprimirTablero();
+    timer.finTimer();
+    document.getElementById("timer").innerHTML = "0";
+    timer = new Timer(0);
+}
+
+let timer = new Timer(); //Creo un timer
 crearTablero(cantCol, cantFil);
 crearMinas(cantMinas);
 asignarNumero();
 imprimirTablero();
-
-//previaTablero();
-
-//console.log(tablero);

@@ -4,6 +4,11 @@ var cantMinas = 5; //Cantidad total de minas
 var tablero = [[]]; //Array de objetos
 var cantidadOcultos = cantCol * cantFil - cantMinas; //Contador para saber cuando ganamos
 var divPrincipal = document.getElementById("principal");
+//document.getElementById("minas").innerHTML = cantidadOcultos;
+//Boton Para comenzar un juego nuevo
+var botonReset = document
+    .getElementById("reset")
+    .addEventListener("click", resetClick);
 //Clase para guardar las coordenadas de cada caja(casillero) del tablero
 var Caja = /** @class */ (function () {
     function Caja(fil, col, status, visible) {
@@ -13,6 +18,27 @@ var Caja = /** @class */ (function () {
         this.visible = visible;
     }
     return Caja;
+}());
+//Clase Timer para medir el tiempo
+var Timer = /** @class */ (function () {
+    function Timer(counter, id) {
+        var _this = this;
+        if (counter === void 0) { counter = 0; }
+        if (id === void 0) { id = 0; }
+        this.counter = counter;
+        var intervalId = setInterval(function () {
+            _this.counter = _this.counter + 1;
+            console.log(_this.counter);
+            document.getElementById("timer").innerHTML = _this.counter;
+            if (_this.counter === 999)
+                clearInterval(intervalId);
+        }, 1000);
+        this.id = intervalId;
+    }
+    Timer.prototype.finTimer = function () {
+        clearInterval(this.id);
+    };
+    return Timer;
 }());
 //let caja = new Caja(1, 2, "hola");
 //Función para inicializar el tablero y crear los objetos
@@ -110,26 +136,18 @@ function click(id) {
         var col = parseInt(e.target.id.toString().split("")[1]);
         var cajaStatus = document.getElementById(id).getAttribute("status");
         if (tablero[fil][col].visible === "oculto") {
-            //console.log(tablero[fil][col]);
             if (tablero[fil][col].status === -1) {
                 console.error("perdiste");
                 mostrarTodo();
+                timer.finTimer();
                 //Perdiste el juego
             }
             else if (tablero[fil][col].status !== 0) {
-                //console.log("numero");
                 cambiarStatus(fil, col);
-                // document.getElementById(id).style.backgroundColor = "white";
-                // document.getElementById(id).style.textIndent = "0px";
-                // tablero[fil][col].visible = "visto";
                 //Hay un numero revelar
             }
             else {
-                //console.log("blanco");
                 cambiarStatus(fil, col);
-                // document.getElementById(id).style.backgroundColor = "white";
-                // document.getElementById(id).style.textIndent = "0px";
-                // tablero[fil][col].visible = "visto";
                 //Hay una caja vacia, expandir...
                 verificarVecino(fil, col);
             }
@@ -169,6 +187,7 @@ function cambiarStatus(fil, col) {
     if (cantidadOcultos === 0) {
         mostrarTodo();
         console.warn("Ganaste");
+        timer.finTimer();
     }
 }
 //Funcion para mostrar todo cuando perdemos o ganamos
@@ -182,9 +201,21 @@ function mostrarTodo() {
         }
     }
 }
+///Función para juego nuevo
+function resetClick(e) {
+    crearTablero(cantCol, cantFil);
+    crearMinas(cantMinas);
+    asignarNumero();
+    //console.log(tablero);
+    divPrincipal.innerHTML = ""; //limpio el HTML
+    cantidadOcultos = cantCol * cantFil - cantMinas; //Reseteo el contador
+    imprimirTablero();
+    timer.finTimer();
+    document.getElementById("timer").innerHTML = "0";
+    timer = new Timer(0);
+}
+var timer = new Timer(); //Creo un timer
 crearTablero(cantCol, cantFil);
 crearMinas(cantMinas);
 asignarNumero();
 imprimirTablero();
-//previaTablero();
-//console.log(tablero);

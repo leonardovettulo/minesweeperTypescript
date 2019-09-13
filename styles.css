@@ -9,21 +9,47 @@
     width: 400px;
     height: 400px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    color: darkslategray;
+    color: #5D707F;
 }
 
 .caja {
     width: 40px;
     height: 40px;
-    background-color: #e1e1e1;
+    background-color: #8797B2;
     text-align: center;
     line-height: 40px;
     float: left;
-    border: 1px lightgrey solid;
+    border: 1px #A7A5C6 solid;
     overflow: hidden;
     text-indent: -100px;
 }
 
 .caja:hover {
     cursor: pointer;
+}
+
+#secundario {
+    display: flex;
+    background-color: #8797B2;
+    height: 100px;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#secundario .box {
+    width: 100px;
+    height: 80px;
+    background-color: #5D707F;
+    text-align: center;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 40px;
+}
+
+#reset:hover {
+    cursor: pointer;
+}
+
+#secundario #timer {
+    line-height: 75px;
 }
