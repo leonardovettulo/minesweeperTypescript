@@ -1,6 +1,7 @@
+//MINESWEEPER TYPESCRIT
 var cantCol = 10; //Cantidad total de columnas
 var cantFil = 10; //Cantidad total de filas
-var cantMinas = 5; //Cantidad total de minas
+var cantMinas = 10; //Cantidad total de minas
 var tablero = [[]]; //Array de objetos
 var cantidadOcultos = cantCol * cantFil - cantMinas; //Contador para saber cuando ganamos
 var divPrincipal = document.getElementById("principal");
@@ -138,6 +139,8 @@ function click(id) {
         if (tablero[fil][col].visible === "oculto") {
             if (tablero[fil][col].status === -1) {
                 console.error("perdiste");
+                document.getElementById("game").innerHTML = "YOU HAVE LOST";
+                document.getElementById("game").style.backgroundColor = "red";
                 mostrarTodo();
                 timer.finTimer();
                 //Perdiste el juego
@@ -186,6 +189,8 @@ function cambiarStatus(fil, col) {
     console.log(cantidadOcultos);
     if (cantidadOcultos === 0) {
         mostrarTodo();
+        document.getElementById("game").innerHTML = "YOU HAVE WON";
+        document.getElementById("game").style.backgroundColor = "green";
         console.warn("Ganaste");
         timer.finTimer();
     }
@@ -213,6 +218,8 @@ function resetClick(e) {
     timer.finTimer();
     document.getElementById("timer").innerHTML = "0";
     timer = new Timer(0);
+    document.getElementById("game").innerHTML = "";
+    document.getElementById("game").style.backgroundColor = "#5D707F";
 }
 var timer = new Timer(); //Creo un timer
 crearTablero(cantCol, cantFil);
