@@ -5,10 +5,11 @@ var tablero = [[]]; //Array de objetos
 var divPrincipal = document.getElementById("principal");
 //Clase para guardar las coordenadas de cada caja(casillero) del tablero
 var Caja = /** @class */ (function () {
-    function Caja(fil, col, status) {
+    function Caja(fil, col, status, visible) {
         this.col = col;
         this.fil = fil;
         this.status = status;
+        this.visible = visible;
     }
     return Caja;
 }());
@@ -19,22 +20,22 @@ function crearTablero(cantCol, cantFil) {
     for (var fil = 0; fil < cantFil; fil++) {
         tablero[fil] = [];
         for (var col = 0; col < cantCol; col++) {
-            tablero[fil][col] = new Caja(fil, col, 0);
+            tablero[fil][col] = new Caja(fil, col, 0, "oculto");
         }
     }
 }
-//Función para imprimir el tablero en HTML (vista previa)
-function previaTablero() {
-    var imprimir = "";
-    for (var fil = 0; fil < cantFil; fil++) {
-        imprimir += "<br>";
-        for (var col = 0; col < cantCol; col++) {
-            imprimir += "&emsp;";
-            imprimir += tablero[fil][col].status;
-        }
-    }
-    divPrincipal.innerHTML = imprimir;
-}
+// //Función para imprimir el tablero en HTML (vista previa)
+// function previaTablero() {
+//     let imprimir: string = "";
+//     for (let fil: number = 0; fil < cantFil; fil++) {
+//         imprimir += "<br>";
+//         for (let col: number = 0; col < cantCol; col++) {
+//             imprimir += "&emsp;";
+//             imprimir += tablero[fil][col].status;
+//         }
+//     }
+//     divPrincipal.innerHTML = imprimir;
+// }
 //Función para crear minas aleatoreamente en filas y columnas
 //Recibe como argumento la cantidad de minas, que puede ser elegido desde la variable global cantMinas
 function crearMinas(cantMinas) {
@@ -73,8 +74,59 @@ function asignarNumero() {
         }
     }
 }
+function imprimirTablero() {
+    for (var fil = 0; fil < cantFil; fil++) {
+        for (var col = 0; col < cantCol; col++) {
+            //Creao un div por cada caja y le asigno un ID fila/columna
+            var newDiv = document.createElement("div");
+            newDiv.className = "caja";
+            newDiv.id = "" + fil + col;
+            //Cambio el caracter para visualizar mejor
+            var textoTablero = tablero[fil][col].status.toString();
+            if (textoTablero === "0") {
+                textoTablero = "";
+            }
+            else if (textoTablero === "-1") {
+                textoTablero = "XX";
+            }
+            var newDivText = document.createTextNode(textoTablero);
+            newDiv.appendChild(newDivText);
+            divPrincipal.appendChild(newDiv);
+            click("" + fil + col); //Llamo a la funcion click para crear el eventHandler
+        }
+    }
+}
+function click(id) {
+    var button = document
+        .getElementById(id)
+        .addEventListener("click", buttonClick);
+    //Function for event listener
+    function buttonClick(e) {
+        //console.log(e);
+        //Extraigo el numero de fila y columna del click
+        var fil = parseInt(e.target.id.toString().split("")[0]);
+        var col = parseInt(e.target.id.toString().split("")[1]);
+        var cajaStatus = document.getElementById(id).getAttribute("status");
+        if (tablero[fil][col].visible === "oculto") {
+            //console.log(tablero[fil][col]);
+            if (tablero[fil][col].status === -1) {
+                console.error("perdiste");
+                //Perdiste el juego
+            }
+            else if (tablero[fil][col].status !== 0) {
+                console.log("numero");
+                //Hay un numero revelar
+            }
+            else {
+                console.log("blanco");
+                //Hay una caja vacia, expandir...
+            }
+        }
+    }
+}
 crearTablero(cantCol, cantFil);
 crearMinas(cantMinas);
 asignarNumero();
-previaTablero();
+imprimirTablero();
+//previaTablero();
 //console.log(tablero);
