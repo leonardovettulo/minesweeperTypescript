@@ -113,6 +113,7 @@ function imprimirTablero() {
     }
 }
 
+//Funcion para generar el evento click y verificar si tocamos una mina, un numero o una caja vacia
 function click(id: string) {
     let button = document
         .getElementById(id)
@@ -131,14 +132,67 @@ function click(id: string) {
             //console.log(tablero[fil][col]);
             if (tablero[fil][col].status === -1) {
                 console.error("perdiste");
+                mostrarTodo();
                 //Perdiste el juego
             } else if (tablero[fil][col].status !== 0) {
-                console.log("numero");
+                //console.log("numero");
+                document.getElementById(id).style.backgroundColor = "white";
+                document.getElementById(id).style.textIndent = "0px";
+                tablero[fil][col].visible = "visto";
                 //Hay un numero revelar
             } else {
-                console.log("blanco");
+                //console.log("blanco");
+                document.getElementById(id).style.backgroundColor = "white";
+                document.getElementById(id).style.textIndent = "0px";
+                tablero[fil][col].visible = "visto";
                 //Hay una caja vacia, expandir...
+                verificarVecino(fil, col);
             }
+        }
+    }
+}
+
+//Funcion para ir expandiendo el rango visible. Lógica similar a la función asignarNumero
+
+function verificarVecino(fil: number, col: number) {
+    for (let offCol = -1; offCol <= 1; offCol++) {
+        for (let offFil = -1; offFil <= 1; offFil++) {
+            if (
+                fil + offFil >= 0 &&
+                fil + offFil < cantFil &&
+                col + offCol >= 0 &&
+                col + offCol < cantCol
+            ) {
+                if (tablero[fil + offFil][col + offCol].visible === "oculto") {
+                    if (tablero[fil + offFil][col + offCol].status > 0) {
+                        cambiarStatus(fil + offFil, col + offCol);
+                    } else {
+                        cambiarStatus(fil + offFil, col + offCol);
+                        verificarVecino(fil + offFil, col + offCol);
+                    }
+                }
+            }
+        }
+    }
+}
+
+//Funcion para cambiar status a visible y cambiar el formato de las cajas
+function cambiarStatus(fil: number, col: number) {
+    tablero[fil][col] = "visto";
+    let id: string = fil.toString() + col.toString();
+    //console.log(id);
+    document.getElementById(id).style.backgroundColor = "white";
+    document.getElementById(id).style.textIndent = "0px";
+}
+
+//Funcion para mostrar todo cuando perdemos o ganamos
+function mostrarTodo() {
+    for (let fil: number = 0; fil < cantFil; fil++) {
+        for (let col: number = 0; col < cantCol; col++) {
+            document.getElementById(`${fil}${col}`).style.backgroundColor =
+                "white";
+            document.getElementById(`${fil}${col}`).style.textIndent = "0px";
+            tablero[fil][col].visible = "visto";
         }
     }
 }
